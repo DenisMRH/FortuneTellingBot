@@ -8,10 +8,12 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/joho/godotenv"
 )
 
 // Структура запроса к DeepSeek API (Ollama)
@@ -79,16 +81,13 @@ func queryDeepSeek(prompt string) (string, error) {
 }
 
 func main() {
-	// Получаем API-ключ бота из переменной среды
-	botToken := ""
-	if botToken == "" {
-		log.Fatal("Ошибка: не задан TELEGRAM_BOT_TOKEN")
-	}
 
-	// Создаём бота
-	bot, err := tgbotapi.NewBotAPI(botToken)
+	// Получаем API-ключ бота из переменной среды
+	TELEGRAM_BOT_TOKEN := importEnv("token.env", "TELEGRAM_BOT_TOKEN")
+	bot, err := tgbotapi.NewBotAPI(TELEGRAM_BOT_TOKEN)
 	if err != nil {
-		log.Panic(err)
+		// Если ошибка при создании бота - выводим её и завершаем работу
+		log.Panic("Ошибка инициализации бота:", err)
 	}
 	bot.Debug = true
 	log.Printf("Бот запущен как %s", bot.Self.UserName)
@@ -142,4 +141,18 @@ func main() {
 			log.Printf("Ошибка отправки сообщения: %v", err)
 		}
 	}
+}
+
+func importEnv(fileName, varName string) (variable string) {
+	err := godotenv.Load(fileName)
+	if err != nil {
+		log.Fatalf("Ошибка импорта файла %v", err)
+	}
+
+	variable = os.Getenv(varName)
+	if variable == "" {
+		log.Fatalf("Переменная %v не найдена.", variable)
+	}
+	fmt.Println("Переменная ", varName, " из файла ", fileName, " импортирована!")
+	return
 }
