@@ -1,158 +1,205 @@
-package main
+package main // Объявление пакета main — точка входа в программу
 
+// Импорт необходимых библиотек:
 import (
-	"bufio"
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io"
-	"log"
-	"net/http"
-	"os"
-	"regexp"
-	"strings"
-
+	// Стандартная библиотека log для логирования ошибок и информационных сообщений
+	log "log"
+	// Библиотека для работы с Telegram Bot API
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/joho/godotenv"
 )
 
-// Структура запроса к DeepSeek API (Ollama)
-type DeepSeekRequest struct {
-	Model  string `json:"model"`
-	Prompt string `json:"prompt"`
-}
+// Глобальная переменная для хранения ID последнего сообщения, отправленного ботом.
+// Используется для удаления предыдущего ответа бота перед отправкой нового.
+var lastBotMessageID int
 
-// Структура ответа от DeepSeek API (корректируем, если формат отличается)
-type DeepSeekResponse struct {
-	Response string `json:"response"`
-}
-
-// Функция для запроса к DeepSeek
-func queryDeepSeek(prompt string) (string, error) {
-	url := "http://localhost:11434/api/generate"
-
-	// Формируем JSON-запрос
-	reqBody, err := json.Marshal(DeepSeekRequest{
-		Model:  "deepseek-r1:14b",
-		Prompt: prompt,
-	})
-	if err != nil {
-		return "", fmt.Errorf("ошибка формирования запроса: %v", err)
-	}
-
-	// Отправка запроса
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(reqBody))
-	if err != nil {
-		return "", fmt.Errorf("ошибка отправки запроса: %v", err)
-	}
-	defer resp.Body.Close()
-
-	// Читаем ответ построчно (если JSONL)
-	var fullResponse string
-	scanner := bufio.NewScanner(resp.Body)
-	for scanner.Scan() {
-		line := scanner.Text()
-		log.Printf("Ответ от DeepSeek (строка): %s", line)
-
-		var dsResp DeepSeekResponse
-		err = json.Unmarshal([]byte(line), &dsResp)
-		if err != nil {
-			log.Printf("Ошибка парсинга JSON: %v", err)
-			continue
-		}
-
-		fullResponse += dsResp.Response
-	}
-
-	if err := scanner.Err(); err != nil && err != io.EOF {
-		return "", fmt.Errorf("ошибка чтения ответа: %v", err)
-	}
-
-	// Если ответ пустой, возвращаем сообщение по умолчанию
-	if fullResponse == "" {
-		return "DeepSeek не вернул ответ. Проверьте, работает ли модель.", nil
-	}
-
-	// Удаляем содержимое между <think> и </think> (с учётом переносов строк)
-	cleanedResponse := regexp.MustCompile(`(?s)<think>.*?</think>`).ReplaceAllString(fullResponse, "")
-	cleanedResponse = strings.TrimSpace(cleanedResponse) // Убираем лишние пробелы и пустые строки
-
-	return cleanedResponse, nil
-}
-
+// Функция main — точка входа программы
 func main() {
-
-	// Получаем API-ключ бота из переменной среды
-	TELEGRAM_BOT_TOKEN := importEnv("hiddenFiles.env", "TELEGRAM_BOT_TOKEN")
-	bot, err := tgbotapi.NewBotAPI(TELEGRAM_BOT_TOKEN)
+	// Создание нового экземпляра бота, используя ваш уникальный токен.
+	// Функция NewBotAPI возвращает объект bot и ошибку (err)
+	bot, err := tgbotapi.NewBotAPI("5318879758:AAHu_iTb1iY_s6Go5kCkabKQnDSNHZIATt8")
+	// Если произошла ошибка (например, неверный токен), программа выводит ошибку и завершается
 	if err != nil {
-		// Если ошибка при создании бота - выводим её и завершаем работу
-		log.Panic("Ошибка инициализации бота:", err)
+		log.Panic(err)
 	}
+
+	// Включаем режим отладки, чтобы получать подробный лог работы бота
 	bot.Debug = true
-	log.Printf("Бот запущен как %s", bot.Self.UserName)
 
-	// Настроим обновления
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-	updates := bot.GetUpdatesChan(u)
+	// Выводим в лог сообщение об успешной авторизации бота с указанием его имени
+	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	// Обрабатываем входящие сообщения
+	// Создаем объект конфигурации для получения обновлений (новых сообщений)
+	// Передаем 0, что означает, что мы хотим получать все обновления начиная с самого первого
+	updateConfig := tgbotapi.NewUpdate(0)
+	// Устанавливаем таймаут для получения обновлений. Если за 60 секунд ничего не придет — соединение разорвается.
+	updateConfig.Timeout = 60
+
+	// Получаем канал, по которому будут приходить обновления от Telegram
+	updates := bot.GetUpdatesChan(updateConfig)
+
+	// Бесконечный цикл для обработки каждого обновления, полученного из канала updates
 	for update := range updates {
-		if (update.Message == nil) || (len(update.Message.Text) > 170) { // Игнорируем не-текстовые сообщения
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Вы отправили слишком длинное сообщение, либо сообщение не текстовое.")
-			_, err = bot.Send(msg)
-			if err != nil {
-				log.Printf("Ошибка отправки сообщения: %v", err)
-			}
-			continue
-		}
-
-		userPrompt := `
-Ты профессиональная гадалка-таролог! Разбираешься во всех терминах тарологии, гороскопа и будущего!
-
-Я напишу тебе вопрос касающийся моего будущего.  САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!! САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!!
-
-Твоя задача:
-Сделать мне расклад по трём картам таро. Карты ты должен выбрать сам, назвать и опиши что они значат. Рассказать как пройдёт мой день сегодня исходя из этих карт.
-Расскажи не длинно, не больше 800 символов.
-ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!! ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!!
-
-Вопрос касающийся моего будущего, ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!! САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!! :
-` + update.Message.Text
-
-		log.Printf("Сообщение от пользователя: %s", userPrompt)
-
-		// Отправляем запрос в DeepSeek
-		answer, err := queryDeepSeek(userPrompt)
-		if err != nil {
-			answer = "Ошибка при запросе к DeepSeek: " + err.Error()
-		}
-
-		// Проверяем, что ответ не пустой
-		if answer == "" {
-			answer = "Извините, я не смог обработать ваш запрос."
-		}
-
-		// Отправляем ответ пользователю
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, answer)
-		_, err = bot.Send(msg)
-		if err != nil {
-			log.Printf("Ошибка отправки сообщения: %v", err)
+		// Если обновление содержит сообщение (а не, например, callback-запрос), то:
+		if update.Message != nil {
+			// Передаем сообщение в функцию обработки handleMessage, где будет осуществлена логика ответа
+			handleMessage(bot, update.Message)
 		}
 	}
 }
 
-func importEnv(fileName, varName string) (variable string) {
-	err := godotenv.Load(fileName)
-	if err != nil {
-		log.Fatalf("Ошибка импорта файла %v", err)
+// Функция handleMessage обрабатывает входящие сообщения от пользователей.
+// Принимает два аргумента: объект бота и сообщение от пользователя.
+func handleMessage(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
+	// ----------------------- Удаление сообщения пользователя -----------------------
+	// Создаем запрос на удаление сообщения пользователя, используя ID чата и ID самого сообщения.
+	deleteMsg := tgbotapi.NewDeleteMessage(message.Chat.ID, message.MessageID)
+	// Отправляем запрос на удаление. Это нужно, чтобы в чате оставался только ответ бота.
+	bot.Send(deleteMsg)
+
+	// ----------------------- Удаление предыдущего сообщения бота -----------------------
+	// Если переменная lastBotMessageID не равна 0, значит бот ранее отправлял сообщение.
+	if lastBotMessageID != 0 {
+		// Создаем запрос на удаление предыдущего сообщения бота по сохраненному ID.
+		deleteBotMsg := tgbotapi.NewDeleteMessage(message.Chat.ID, lastBotMessageID)
+		// Отправляем запрос на удаление предыдущего сообщения бота.
+		bot.Send(deleteBotMsg)
 	}
 
-	variable = os.Getenv(varName)
-	if variable == "" {
-		log.Fatalf("Переменная %v не найдена.", variable)
+	// ----------------------- Обработка текста входящего сообщения -----------------------
+	// Используем конструкцию switch для определения, какое действие выполнить в зависимости от текста сообщения.
+	switch message.Text {
+	// Если пользователь отправил "/start", запускается главное меню.
+	case "/start":
+		// Вызывается функция sendMainMenu, которая отправляет главное меню.
+		// Возвращается ID отправленного сообщения, который сохраняется в переменной lastBotMessageID.
+		lastBotMessageID = sendMainMenu(bot, message.Chat.ID)
+	// Если пользователь выбрал "Задать вопрос", отправляется меню с вопросами.
+	case "Задать вопрос":
+		lastBotMessageID = sendQuestionMenu(bot, message.Chat.ID)
+	// Если пользователь выбрал "Инструкция", отправляется сообщение с инструкцией.
+	case "Инструкция":
+		lastBotMessageID = sendInstruction(bot, message.Chat.ID)
+	// Если пользователь выбрал "Тарифы", отправляется сообщение с описанием тарифов.
+	case "Тарифы":
+		lastBotMessageID = sendTariffs(bot, message.Chat.ID)
+	// Если пользователь выбрал один из вариантов вопроса ("Что ждёт меня сегодня?" или "Любовный расклад"),
+	// отправляется сообщение-заглушка, так как функционал ещё не реализован.
+	case "Что ждёт меня сегодня?", "Любовный расклад":
+		lastBotMessageID = sendMessage(bot, message.Chat.ID, "Функционал пока не реализован.")
+	// Если пользователь нажал "Назад в меню", отправляется главное меню.
+	case "Назад в меню":
+		lastBotMessageID = sendMainMenu(bot, message.Chat.ID)
+	// Если текст сообщения не соответствует ни одному из вариантов, отправляется сообщение об ошибке.
+	default:
+		lastBotMessageID = sendMessage(bot, message.Chat.ID, "Неизвестная команда. Выберите пункт из меню.")
 	}
-	fmt.Println("Переменная ", varName, " из файла ", fileName, " импортирована!")
-	return
+}
+
+// Функция sendMessage отправляет произвольное текстовое сообщение с кнопкой "Назад в меню".
+// Она принимает объект бота, ID чата и текст сообщения, а возвращает ID отправленного сообщения.
+func sendMessage(bot *tgbotapi.BotAPI, chatID int64, text string) int {
+	// Создаем новое сообщение с заданным текстом для указанного чата.
+	msg := tgbotapi.NewMessage(chatID, text)
+	// Устанавливаем клавиатуру с единственной кнопкой "Назад в меню".
+	// Это гарантирует, что у пользователя всегда будет возможность вернуться в главное меню.
+	msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+		Keyboard: [][]tgbotapi.KeyboardButton{
+			// Создаем ряд клавиатуры с одной кнопкой "Назад в меню"
+			{tgbotapi.NewKeyboardButton("Назад в меню")},
+		},
+		ResizeKeyboard:  true, // Автоматически подгоняет размер клавиатуры под экран пользователя
+		OneTimeKeyboard: true, // Клавиатура исчезает после нажатия на кнопку
+	}
+	// Отправляем сообщение и сохраняем объект отправленного сообщения (sentMsg).
+	sentMsg, _ := bot.Send(msg)
+	// Возвращаем MessageID отправленного сообщения для последующего удаления.
+	return sentMsg.MessageID
+}
+
+// Функция sendMainMenu отправляет главное меню.
+// Главное меню содержит кнопки для основных действий, включая "Назад в меню" для единообразия.
+func sendMainMenu(bot *tgbotapi.BotAPI, chatID int64) int {
+	// Создаем новое сообщение с текстом "Выберите действие:" для пользователя.
+	msg := tgbotapi.NewMessage(chatID, "Выберите действие:")
+	// Определяем клавиатуру, которая будет показана пользователю вместе с сообщением.
+	msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+		Keyboard: [][]tgbotapi.KeyboardButton{
+			// Первая строка: кнопка "Задать вопрос"
+			{tgbotapi.NewKeyboardButton("Задать вопрос")},
+			// Вторая строка: кнопка "Инструкция"
+			{tgbotapi.NewKeyboardButton("Инструкция")},
+			// Третья строка: кнопка "Тарифы"
+			{tgbotapi.NewKeyboardButton("Тарифы")},
+			// Четвертая строка: кнопка "Назад в меню"
+			{tgbotapi.NewKeyboardButton("Назад в меню")},
+		},
+		ResizeKeyboard:  true, // Клавиатура адаптируется под размер экрана
+		OneTimeKeyboard: true, // Клавиатура исчезает после выбора кнопки
+	}
+	// Отправляем сообщение и сохраняем ID отправленного сообщения.
+	sentMsg, _ := bot.Send(msg)
+	// Возвращаем MessageID для возможности последующего удаления.
+	return sentMsg.MessageID
+}
+
+// Функция sendQuestionMenu отправляет меню с вариантами вопросов.
+// Меню включает опции вопросов и всегда содержит кнопку "Назад в меню".
+func sendQuestionMenu(bot *tgbotapi.BotAPI, chatID int64) int {
+	// Создаем сообщение с текстом "Выберите вопрос:".
+	msg := tgbotapi.NewMessage(chatID, "Выберите вопрос:")
+	// Определяем клавиатуру с тремя кнопками: два варианта вопроса и кнопка для возврата в главное меню.
+	msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+		Keyboard: [][]tgbotapi.KeyboardButton{
+			// Первая строка: кнопка "Что ждёт меня сегодня?"
+			{tgbotapi.NewKeyboardButton("Что ждёт меня сегодня?")},
+			// Вторая строка: кнопка "Любовный расклад"
+			{tgbotapi.NewKeyboardButton("Любовный расклад")},
+			// Третья строка: кнопка "Назад в меню" для возврата
+			{tgbotapi.NewKeyboardButton("Назад в меню")},
+		},
+		ResizeKeyboard:  true, // Автоматическая подгонка размеров клавиатуры
+		OneTimeKeyboard: true, // Клавиатура исчезает после выбора
+	}
+	// Отправляем сообщение и сохраняем его MessageID.
+	sentMsg, _ := bot.Send(msg)
+	// Возвращаем MessageID для удаления при следующем обновлении.
+	return sentMsg.MessageID
+}
+
+// Функция sendInstruction отправляет сообщение с инструкцией для пользователя.
+// Сообщение содержит текст-инструкцию и всегда включает кнопку "Назад в меню".
+func sendInstruction(bot *tgbotapi.BotAPI, chatID int64) int {
+	// Создаем сообщение с текстом инструкции.
+	msg := tgbotapi.NewMessage(chatID, "Инструкция: \nЗдесь будет ваша инструкция.")
+	// Определяем клавиатуру с единственной кнопкой "Назад в меню".
+	msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+		Keyboard: [][]tgbotapi.KeyboardButton{
+			{tgbotapi.NewKeyboardButton("Назад в меню")},
+		},
+		ResizeKeyboard:  true, // Адаптация клавиатуры под экран
+		OneTimeKeyboard: true, // Клавиатура скрывается после выбора
+	}
+	// Отправляем сообщение и сохраняем его MessageID.
+	sentMsg, _ := bot.Send(msg)
+	// Возвращаем MessageID отправленного сообщения.
+	return sentMsg.MessageID
+}
+
+// Функция sendTariffs отправляет сообщение с описанием тарифов.
+// Также включает клавиатуру с кнопкой "Назад в меню".
+func sendTariffs(bot *tgbotapi.BotAPI, chatID int64) int {
+	// Создаем сообщение с текстом тарифов.
+	msg := tgbotapi.NewMessage(chatID, "Тарифы: \nЗдесь будет описание тарифов.")
+	// Определяем клавиатуру с кнопкой "Назад в меню".
+	msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+		Keyboard: [][]tgbotapi.KeyboardButton{
+			{tgbotapi.NewKeyboardButton("Назад в меню")},
+		},
+		ResizeKeyboard:  true, // Подгонка клавиатуры под размер экрана
+		OneTimeKeyboard: true, // Клавиатура скрывается после нажатия
+	}
+	// Отправляем сообщение и сохраняем его MessageID.
+	sentMsg, _ := bot.Send(msg)
+	// Возвращаем MessageID для последующего удаления, если потребуется.
+	return sentMsg.MessageID
 }
