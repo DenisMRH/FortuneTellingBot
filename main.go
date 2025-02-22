@@ -107,8 +107,8 @@ func sendMessage(bot *tgbotapi.BotAPI, chatID int64, text string) int {
 			// Создаем ряд клавиатуры с одной кнопкой "Назад в меню"
 			{tgbotapi.NewKeyboardButton("Назад в меню")},
 		},
-		ResizeKeyboard:  true, // Автоматически подгоняет размер клавиатуры под экран пользователя
-		OneTimeKeyboard: true, // Клавиатура исчезает после нажатия на кнопку
+		ResizeKeyboard:  true,  // Автоматически подгоняет размер клавиатуры под экран пользователя
+		OneTimeKeyboard: false, // Клавиатура исчезает после нажатия на кнопку
 	}
 	// Отправляем сообщение и сохраняем объект отправленного сообщения (sentMsg).
 	sentMsg, _ := bot.Send(msg)
@@ -130,11 +130,9 @@ func sendMainMenu(bot *tgbotapi.BotAPI, chatID int64) int {
 			{tgbotapi.NewKeyboardButton("Инструкция")},
 			// Третья строка: кнопка "Тарифы"
 			{tgbotapi.NewKeyboardButton("Тарифы")},
-			// Четвертая строка: кнопка "Назад в меню"
-			{tgbotapi.NewKeyboardButton("Назад в меню")},
 		},
-		ResizeKeyboard:  true, // Клавиатура адаптируется под размер экрана
-		OneTimeKeyboard: true, // Клавиатура исчезает после выбора кнопки
+		ResizeKeyboard:  true,  // Клавиатура адаптируется под размер экрана
+		OneTimeKeyboard: false, // Клавиатура исчезает после выбора кнопки
 	}
 	// Отправляем сообщение и сохраняем ID отправленного сообщения.
 	sentMsg, _ := bot.Send(msg)
@@ -157,8 +155,8 @@ func sendQuestionMenu(bot *tgbotapi.BotAPI, chatID int64) int {
 			// Третья строка: кнопка "Назад в меню" для возврата
 			{tgbotapi.NewKeyboardButton("Назад в меню")},
 		},
-		ResizeKeyboard:  true, // Автоматическая подгонка размеров клавиатуры
-		OneTimeKeyboard: true, // Клавиатура исчезает после выбора
+		ResizeKeyboard:  true,  // Автоматическая подгонка размеров клавиатуры
+		OneTimeKeyboard: false, // Клавиатура исчезает после выбора
 	}
 	// Отправляем сообщение и сохраняем его MessageID.
 	sentMsg, _ := bot.Send(msg)
@@ -176,8 +174,8 @@ func sendInstruction(bot *tgbotapi.BotAPI, chatID int64) int {
 		Keyboard: [][]tgbotapi.KeyboardButton{
 			{tgbotapi.NewKeyboardButton("Назад в меню")},
 		},
-		ResizeKeyboard:  true, // Адаптация клавиатуры под экран
-		OneTimeKeyboard: true, // Клавиатура скрывается после выбора
+		ResizeKeyboard:  true,  // Адаптация клавиатуры под экран
+		OneTimeKeyboard: false, // Клавиатура скрывается после выбора
 	}
 	// Отправляем сообщение и сохраняем его MessageID.
 	sentMsg, _ := bot.Send(msg)
@@ -195,8 +193,8 @@ func sendTariffs(bot *tgbotapi.BotAPI, chatID int64) int {
 		Keyboard: [][]tgbotapi.KeyboardButton{
 			{tgbotapi.NewKeyboardButton("Назад в меню")},
 		},
-		ResizeKeyboard:  true, // Подгонка клавиатуры под размер экрана
-		OneTimeKeyboard: true, // Клавиатура скрывается после нажатия
+		ResizeKeyboard:  true,  // Подгонка клавиатуры под размер экрана
+		OneTimeKeyboard: false, // Клавиатура скрывается после нажатия
 	}
 	// Отправляем сообщение и сохраняем его MessageID.
 	sentMsg, _ := bot.Send(msg)
