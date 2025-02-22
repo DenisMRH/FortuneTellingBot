@@ -3,9 +3,12 @@ package main // Объявление пакета main — точка входа
 // Импорт необходимых библиотек:
 import (
 	// Стандартная библиотека log для логирования ошибок и информационных сообщений
+	"fmt"
 	log "log"
+	"os"
 	// Библиотека для работы с Telegram Bot API
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/joho/godotenv"
 )
 
 // Глобальная переменная для хранения ID последнего сообщения, отправленного ботом.
@@ -14,9 +17,12 @@ var lastBotMessageID int
 
 // Функция main — точка входа программы
 func main() {
+	// Получаем API-ключ бота из переменной среды
+	TELEGRAM_BOT_TOKEN := importEnv("hiddenFiles.env", "TELEGRAM_BOT_TOKEN")
+
 	// Создание нового экземпляра бота, используя ваш уникальный токен.
 	// Функция NewBotAPI возвращает объект bot и ошибку (err)
-	bot, err := tgbotapi.NewBotAPI("5318879758:AAHu_iTb1iY_s6Go5kCkabKQnDSNHZIATt8")
+	bot, err := tgbotapi.NewBotAPI(TELEGRAM_BOT_TOKEN)
 	// Если произошла ошибка (например, неверный токен), программа выводит ошибку и завершается
 	if err != nil {
 		log.Panic(err)
@@ -200,4 +206,18 @@ func sendTariffs(bot *tgbotapi.BotAPI, chatID int64) int {
 	sentMsg, _ := bot.Send(msg)
 	// Возвращаем MessageID для последующего удаления, если потребуется.
 	return sentMsg.MessageID
+}
+
+func importEnv(fileName, varName string) (variable string) {
+	err := godotenv.Load(fileName)
+	if err != nil {
+		log.Fatalf("Ошибка импорта файла %v", err)
+	}
+
+	variable = os.Getenv(varName)
+	if variable == "" {
+		log.Fatalf("Переменная %v не найдена.", variable)
+	}
+	fmt.Println("Переменная ", varName, " из файла ", fileName, " импортирована!")
+	return
 }
