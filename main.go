@@ -118,12 +118,6 @@ func handleMessage(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 	// Состояние "question" — пользователь перешёл в режим "Задать вопрос".
 	case "question":
 		switch message.Text {
-		// Если пользователь выбирает один из предложенных вариантов, то:
-		case "Что ждёт меня сегодня?":
-			// Отправляем заглушку, так как функционал пока не реализован.
-			lastBotMessageID = sendMessage(bot, message.Chat.ID, "Функционал пока не реализован.")
-		case "Любовный расклад":
-			lastBotMessageID = sendMessage(bot, message.Chat.ID, "Функционал пока не реализован.")
 		// Если нажата кнопка "Назад в меню", возвращаемся в главное меню.
 		case "Назад в меню":
 			userState[message.Chat.ID] = "main"
@@ -165,7 +159,7 @@ func sendMessage(bot *tgbotapi.BotAPI, chatID int64, text string) int {
 		Keyboard: [][]tgbotapi.KeyboardButton{
 			{tgbotapi.NewKeyboardButton("Назад в меню")},
 		},
-		ResizeKeyboard:  true, // Автоматическая адаптация размеров клавиатуры под устройство пользователя.
+		ResizeKeyboard:  true,  // Автоматическая адаптация размеров клавиатуры под устройство пользователя.
 		OneTimeKeyboard: false, // Клавиатура исчезает после нажатия на кнопку.
 	}
 	// Отправляем сообщение и сохраняем его MessageID.
