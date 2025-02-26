@@ -2,9 +2,16 @@ package main // Основной пакет приложения
 
 import (
 	// Стандартная библиотека для логирования
+	"bufio"
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	log "log"
+	"net/http"
 	"os"
+	"regexp"
+	"strings"
 
 	// Библиотека для работы с Telegram Bot API
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -124,10 +131,53 @@ func handleMessage(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 			lastBotMessageID = sendMainMenu(bot, message.Chat.ID)
 		// Если введён любой другой текст, считаем его самостоятельным вопросом.
 		default:
-			// Отправляем сообщение, что вопрос принят. Здесь можно реализовать дополнительную логику по обработке вопроса.
-			lastBotMessageID = sendMessage(bot, message.Chat.ID, "Ваш вопрос принят: "+message.Text)
-			// После обработки вопроса возвращаем пользователя в главное меню.
-			userState[message.Chat.ID] = "main"
+			if len(message.Text) > 200 {
+				// Игнорируем не-текстовые сообщения
+				// Отправляем сообщение, что сообщение длинное или не текстовое.
+				lastBotMessageID = sendMessage(bot, message.Chat.ID, "Вы отправили слишком длинное сообщение, либо сообщение не текстовое.")
+				// После обработки вопроса возвращаем пользователя в главное меню.
+				userState[message.Chat.ID] = "main"
+			} else {
+
+				userPrompt := `
+				Ты профессиональная гадалка-таролог! Разбираешься во всех терминах тарологии, гороскопа и будущего!
+				
+				Я напишу тебе вопрос касающийся моего будущего.  САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!! САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!!
+				
+				Твоя задача:
+				Сделать мне расклад по трём картам таро. Карты ты должен выбрать сам, назвать и опиши что они значат. Рассказать как пройдёт мой день сегодня исходя из этих карт.
+				Расскажи не длинно, не больше 800 символов.
+				ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!! ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!!
+				
+				Вопрос касающийся моего будущего, ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!! САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!! :
+				` + message.Text
+
+				log.Printf("Сообщение от пользователя: %s", userPrompt)
+
+				// Отправляем запрос в DeepSeek
+				answer, err := queryDeepSeek(userPrompt)
+				if err != nil {
+					answer = "Ошибка при запросе к DeepSeek: " + err.Error()
+				}
+
+				// Проверяем, что ответ не пустой
+				if answer == "" {
+					answer = "Извините, я не смог обработать ваш запрос."
+				}
+
+				// Отправляем ответ пользователю
+				msg := tgbotapi.NewMessage(message.Chat.ID, answer)
+				_, err = bot.Send(msg)
+				if err != nil {
+					log.Printf("Ошибка отправки сообщения: %v", err)
+				}
+
+				// Отправляем ответ пользователю.
+				lastBotMessageID = sendMessage(bot, message.Chat.ID, answer)
+				// После обработки вопроса возвращаем пользователя в главное меню.
+				userState[message.Chat.ID] = "main"
+
+			}
 		}
 
 	// Состояния "instruction" и "tariffs" — пользователь просматривает информацию.
@@ -260,4 +310,68 @@ func importEnv(fileName, varName string) (variable string) {
 	}
 	fmt.Println("Переменная ", varName, " из файла ", fileName, " импортирована!")
 	return
+}
+
+// Структура запроса к DeepSeek API (Ollama)
+type DeepSeekRequest struct {
+	Model  string `json:"model"`
+	Prompt string `json:"prompt"`
+}
+
+// Структура ответа от DeepSeek API (корректируем, если формат отличается)
+type DeepSeekResponse struct {
+	Response string `json:"response"`
+}
+
+// Функция для запроса к DeepSeek
+func queryDeepSeek(prompt string) (string, error) {
+	url := "http://localhost:11434/api/generate"
+
+	// Формируем JSON-запрос
+	reqBody, err := json.Marshal(DeepSeekRequest{
+		Model:  "deepseek-r1:14b",
+		Prompt: prompt,
+	})
+	if err != nil {
+		return "", fmt.Errorf("ошибка формирования запроса: %v", err)
+	}
+
+	// Отправка запроса
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(reqBody))
+	if err != nil {
+		return "", fmt.Errorf("ошибка отправки запроса: %v", err)
+	}
+	defer resp.Body.Close()
+
+	// Читаем ответ построчно (если JSONL)
+	var fullResponse string
+	scanner := bufio.NewScanner(resp.Body)
+	for scanner.Scan() {
+		line := scanner.Text()
+		log.Printf("Ответ от DeepSeek (строка): %s", line)
+
+		var dsResp DeepSeekResponse
+		err = json.Unmarshal([]byte(line), &dsResp)
+		if err != nil {
+			log.Printf("Ошибка парсинга JSON: %v", err)
+			continue
+		}
+
+		fullResponse += dsResp.Response
+	}
+
+	if err := scanner.Err(); err != nil && err != io.EOF {
+		return "", fmt.Errorf("ошибка чтения ответа: %v", err)
+	}
+
+	// Если ответ пустой, возвращаем сообщение по умолчанию
+	if fullResponse == "" {
+		return "DeepSeek не вернул ответ. Проверьте, работает ли модель.", nil
+	}
+
+	// Удаляем содержимое между <think> и </think> (с учётом переносов строк)
+	cleanedResponse := regexp.MustCompile(`(?s)<think>.*?</think>`).ReplaceAllString(fullResponse, "")
+	cleanedResponse = strings.TrimSpace(cleanedResponse) // Убираем лишние пробелы и пустые строки
+
+	return cleanedResponse, nil
 }
