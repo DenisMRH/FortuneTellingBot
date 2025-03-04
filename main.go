@@ -2,11 +2,10 @@ package main // Основной пакет приложения
 
 import (
 	// Стандартная библиотека для логирования
-	"bufio"
+
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	log "log"
 	"math/rand"
 	"net/http"
@@ -166,14 +165,9 @@ func handleMessage(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 				}
 
 				userPrompt := `
-				Ты профессиональная рускоязычная гадалка-таролог! Разбираешься во всех терминах тарологии, во всех картах Таро и их значениях!
-				ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!! ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!!
-САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!! САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!!
-				  
-				Твоя задача:
-				Я скину тебе карты, которые мне выпали, твоя задача ответить на мой вопрос опираясь на эти карты и их описание.
-							
-				Вопрос касающийся моего будущего: \n
+				Ты профессиональная рускоязычная гадалка-таролог! Разбираешься во всех терминах тарологии, во всех картах Таро и их значениях! \n
+				Ответь на мой вопросс максимально подробно, опираясь на выпавшие мне карты. \n
+				Вопрос:
 				` + message.Text + `\n Карты которые мне выпали: \n` + cardMsg
 
 				log.Printf("Сообщение от пользователя: %s", message.Text)
@@ -335,62 +329,50 @@ type DeepSeekRequest struct {
 	Prompt string `json:"prompt"`
 }
 
-// Структура ответа от DeepSeek API (корректируем, если формат отличается)
+// Структура ответа от DeepSeek API
 type DeepSeekResponse struct {
-	Response string `json:"response"`
+	Choices []struct {
+		Text string `json:"text"`
+	} `json:"choices"`
 }
 
-// Функция для запроса к DeepSeek
+// Функция запроса к DeepSeek API
 func queryDeepSeek(prompt string) (string, error) {
 	url := "http://localhost:11434/v1/completions"
 
 	// Формируем JSON-запрос
-	reqBody, err := json.Marshal(DeepSeekRequest{
-		Model:  "deepseek-r1:14b",
-		Prompt: prompt,
+	reqBody, err := json.Marshal(map[string]interface{}{
+		"model":  "deepseek-r1:32b",
+		"prompt": prompt,
 	})
 	if err != nil {
 		return "", fmt.Errorf("ошибка формирования запроса: %v", err)
 	}
 
-	// Отправка запроса
+	// Отправляем HTTP-запрос
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		return "", fmt.Errorf("ошибка отправки запроса: %v", err)
 	}
 	defer resp.Body.Close()
 
-	// Читаем ответ построчно (если JSONL)
-	var fullResponse string
-	scanner := bufio.NewScanner(resp.Body)
-	for scanner.Scan() {
-		line := scanner.Text()
-		log.Printf("Ответ от DeepSeek (строка): %s", line)
-
-		var dsResp DeepSeekResponse
-		err = json.Unmarshal([]byte(line), &dsResp)
-		if err != nil {
-			log.Printf("Ошибка парсинга JSON: %v", err)
-			continue
-		}
-
-		fullResponse += dsResp.Response
+	// Декодируем JSON-ответ
+	var dsResp DeepSeekResponse
+	if err := json.NewDecoder(resp.Body).Decode(&dsResp); err != nil {
+		return "", fmt.Errorf("ошибка декодирования JSON: %v", err)
 	}
 
-	if err := scanner.Err(); err != nil && err != io.EOF {
-		return "", fmt.Errorf("ошибка чтения ответа: %v", err)
+	// Проверяем, есть ли текст в `choices`
+	if len(dsResp.Choices) == 0 {
+		return "DeepSeek не вернул текстовый ответ.", nil
 	}
 
-	// Если ответ пустой, возвращаем сообщение по умолчанию
-	if fullResponse == "" {
-		return "DeepSeek не вернул ответ. Проверьте, работает ли модель.", nil
-	}
+	// Убираем <think> ... </think> (если есть)
+	responseText := regexp.MustCompile(`(?s)<think>.*?</think>`).ReplaceAllString(dsResp.Choices[0].Text, "")
+	responseText = strings.TrimSpace(responseText)
 
-	// Удаляем содержимое между <think> и </think> (с учётом переносов строк)
-	cleanedResponse := regexp.MustCompile(`(?s)<think>.*?</think>`).ReplaceAllString(fullResponse, "")
-	cleanedResponse = strings.TrimSpace(cleanedResponse) // Убираем лишние пробелы и пустые строки
-
-	return cleanedResponse, nil
+	// Возвращаем обработанный ответ
+	return responseText, nil
 }
 
 // Определяем структуру, которая будет представлять карту Таро
