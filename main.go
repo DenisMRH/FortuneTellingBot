@@ -8,10 +8,12 @@ import (
 	"fmt"
 	"io"
 	log "log"
+	"math/rand"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	// Библиотека для работы с Telegram Bot API
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -139,19 +141,40 @@ func handleMessage(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 				// После обработки вопроса возвращаем пользователя в главное меню.
 				userState[message.Chat.ID] = "main"
 			} else {
+				// Загружаем карты из JSON-файла
+				cards, err := loadTarotCards("tarocards.json")
+				if err != nil {
+					fmt.Println("Ошибка загрузки карт:", err) // Выводим ошибку, если файл не загрузился
+					return                                    // Завершаем выполнение программы
+				}
+
+				// Выбираем 3 случайные карты
+				selected := drawThreeCards(cards)
+
+				// Выводим результат в консоль
+				fmt.Println("Ваши карты:")
+				cardMsg, cardPrompt := "", ""
+				for _, card := range selected { // Итерируемся по выбранным картам
+					cardMsg = cardMsg + card.Name + "\n" + card.Description + "\n\n\n"
+					cardPrompt = cardPrompt + card.Name + "\n"
+				}
+
+				msg := tgbotapi.NewMessage(message.Chat.ID, cardMsg)
+				_, err = bot.Send(msg)
+				if err != nil {
+					log.Printf("Ошибка отправки сообщения: %v", err)
+				}
 
 				userPrompt := `
-				Ты профессиональная гадалка-таролог! Разбираешься во всех терминах тарологии, гороскопа и будущего!
-				
-				Я напишу тебе вопрос касающийся моего будущего.  САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!! САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!!
-				
-				Твоя задача:
-				Сделать мне расклад по трём картам таро. Карты ты должен выбрать сам, назвать и опиши что они значат. Рассказать как пройдёт мой день сегодня исходя из этих карт.
-				Расскажи не длинно, не больше 800 символов.
+				Ты профессиональная рускоязычная гадалка-таролог! Разбираешься во всех терминах тарологии, во всех картах Таро и их значениях!
 				ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!! ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!!
-				
-				Вопрос касающийся моего будущего, ОТВЕЧАЙ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ НЕ ИСПОЛЬЗУЙ НИКАКИХ ДРУГИХ ЯЗЫКОВ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ ОТВЕЧАЙ ТОЛЬКО ИСПОЛЬЗУЯ КИРИЛИЦУ!!!! САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!! :
-				` + message.Text
+САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!! САМОЕ ГЛАВНОЕ ЕСЛИ МОЙ ВОПРОС НЕ БУДЕТ ПОХОЖ НА ЗАПРОС ПО ГАДАНИЮ, ТО ТЫ ДОЛЖЕН ВЕЖЛИВО ОТКАЗАТЬ В ГАДАНИИ И БОЛЬШЕ НИЧЕГО НЕ ПИСАТЬ!!!
+				  
+				Твоя задача:
+				Я скину тебе карты, которые мне выпали, твоя задача ответить на мой вопрос опираясь на эти карты и их описание.
+							
+				Вопрос касающийся моего будущего: \n
+				` + message.Text + `\n Карты которые мне выпали: \n` + cardMsg
 
 				log.Printf("Сообщение от пользователя: %s", message.Text)
 
@@ -319,11 +342,11 @@ type DeepSeekResponse struct {
 
 // Функция для запроса к DeepSeek
 func queryDeepSeek(prompt string) (string, error) {
-	url := "http://localhost:11434/api/generate"
+	url := "http://localhost:11434/v1/completions"
 
 	// Формируем JSON-запрос
 	reqBody, err := json.Marshal(DeepSeekRequest{
-		Model:  "deepseek-r1:7b",
+		Model:  "deepseek-r1:14b",
 		Prompt: prompt,
 	})
 	if err != nil {
@@ -368,4 +391,45 @@ func queryDeepSeek(prompt string) (string, error) {
 	cleanedResponse = strings.TrimSpace(cleanedResponse) // Убираем лишние пробелы и пустые строки
 
 	return cleanedResponse, nil
+}
+
+// Определяем структуру, которая будет представлять карту Таро
+// Name - название карты, Description - её значение (около 300 символов)
+type TarotCard struct {
+	Name        string `json:"name"`        // Название карты, соответствует ключу "name" в JSON
+	Description string `json:"description"` // Описание карты, соответствует ключу "description" в JSON
+}
+
+// Функция загрузки карт из JSON-файла
+func loadTarotCards(filename string) ([]TarotCard, error) {
+	// Читаем содержимое файла
+	file, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, err // В случае ошибки возвращаем nil и ошибку
+	}
+
+	// Создаём слайс для хранения карт
+	var cards []TarotCard
+
+	// Разбираем JSON в слайс структур TarotCard
+	err = json.Unmarshal(file, &cards)
+	if err != nil {
+		return nil, err // Если возникла ошибка при разборе, возвращаем nil и ошибку
+	}
+
+	return cards, nil // Возвращаем загруженные карты
+}
+
+// Функция выбора 3 случайных карт
+func drawThreeCards(cards []TarotCard) []TarotCard {
+	// Устанавливаем seed (инициализируем генератор случайных чисел)
+	rand.Seed(time.Now().UnixNano()) // Используем текущее время в наносекундах, чтобы каждый раз был разный результат
+
+	// Перемешиваем слайс карт случайным образом
+	rand.Shuffle(len(cards), func(i, j int) {
+		cards[i], cards[j] = cards[j], cards[i] // Меняем местами элементы i и j
+	})
+
+	// Возвращаем первые три карты из перемешанного списка
+	return cards[:3]
 }
