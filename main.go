@@ -3,10 +3,13 @@ package main // Основной пакет приложения
 import (
 	// Стандартная библиотека для логирования
 
+	"fmt"
 	log "log"
+	"os"
 
 	// Библиотека для работы с Telegram Bot API
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/joho/godotenv"
 )
 
 // Глобальная переменная для хранения ID последнего сообщения, отправленного ботом.
@@ -53,4 +56,18 @@ func main() {
 			handleMessage(bot, update.Message)
 		}
 	}
+}
+
+func importEnv(fileName, varName string) (variable string) {
+	err := godotenv.Load(fileName)
+	if err != nil {
+		log.Fatalf("Ошибка импорта файла %v", err)
+	}
+
+	variable = os.Getenv(varName)
+	if variable == "" {
+		log.Fatalf("Переменная %v не найдена.", variable)
+	}
+	fmt.Println("Переменная ", varName, " из файла ", fileName, " импортирована!")
+	return
 }
