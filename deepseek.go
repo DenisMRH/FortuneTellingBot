@@ -28,7 +28,7 @@ func queryDeepSeek(prompt string) (string, error) {
 
 	// Формируем JSON-запрос
 	reqBody, err := json.Marshal(map[string]interface{}{
-		"model":  "deepseek-r1:1.5b",
+		"model":  importEnv("hiddenFiles.env", "model"),
 		"prompt": prompt,
 	})
 	if err != nil {

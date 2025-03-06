@@ -23,6 +23,7 @@ var userState = make(map[int64]string)
 
 // Функция main — точка входа в программу.
 func main() {
+
 	// Получаем API-ключ бота из переменной среды
 	TELEGRAM_BOT_TOKEN := importEnv("hiddenFiles.env", "TELEGRAM_BOT_TOKEN")
 
@@ -53,7 +54,7 @@ func main() {
 		// Если обновление содержит сообщение (а не, например, callback-запрос), то:
 		if update.Message != nil {
 			// Передаем сообщение в функцию handleMessage для обработки.
-			handleMessage(bot, update.Message)
+			go handleMessage(bot, update.Message)
 		}
 	}
 }

@@ -1,0 +1,562 @@
+[
+  {
+ "name": "🃏Jester (straight position)",
+ "description": "The jester symbolizes new beginnings, freedom and spontaneity. This is a map of innocence, optimism and faith in life. It encourages you to trust your intuition and take risks, even if the path seems uncertain. The fool is pure potential, the beginning of a spiritual journey."
+  },
+  {
+ "name": "🃏Jester Inverted position",
+ "description": "When reversed, the Jester indicates recklessness, immaturity, or delays. Possible rash actions that will lead to problems. This is a warning to be careful not to ignore reality."
+  },
+  {
+ "name": "🃏Mag Direct position",
+ "description": "The magician represents willpower, skill and initiative. This is a map of creativity, concentration, and using your talents to achieve your goals. The magician reminds you that you have all the tools for success, you just need to apply them correctly."
+  },
+  {
+ "name": "🃏Mag Inverted position",
+ "description": "When reversed, the Magician can indicate manipulation, deception, or lack of skills. Possible abuse of power or inability to implement their ideas. It's a warning to be honest with yourself and others."
+  },
+  {
+ "name": "🃏High Priestess Direct position",
+ "description": "The High Priestess symbolizes intuition, secrets, and the subconscious mind. This is an inner wisdom card that encourages you to trust your instincts and look for answers within yourself. It also points to hidden knowledge and the need for patience."
+  },
+  {
+ "name": "🃏High Priestess Inverted position",
+ "description": "When reversed, the High Priestess may indicate a suppressed intuition, unwillingness to listen to her inner voice, or hidden fears. There may be difficulties in making decisions due to lack of information."
+  },
+  {
+ "name": "🃏Empress (direct position)",
+ "description": "The Empress represents fertility, abundance and creativity. This is a map of growth, prosperity, and care. It symbolizes connection with nature, motherhood, and making ideas come true."
+  },
+  {
+ "name": "🃏Empress (inverted position)",
+ "description": "When reversed, the Empress can indicate addiction, waste, or stagnation. It may be difficult to express concern or implement creative ideas."
+  },
+  {
+ "name": "🃏Emperor (direct position)",
+ "description": "The Emperor symbolizes power, structure and control. This is a map of leadership, discipline, and stability. It highlights the need to take responsibility for your actions and build a solid foundation for the future. The emperor can also represent a father figure or authority figure."
+  },
+  {
+ "name": "🃏Emperor (inverted position)",
+ "description": "When reversed, the Emperor can indicate tyranny, rigidity, or abuse of power. There may be difficulties with control or excessive dependence on the rules. This is a warning to be flexible and consider the feelings of others."
+  },
+  {
+ "name": "🃏Hierophant (straight position)",
+ "description": "The hierophant represents tradition, spirituality and mentoring. It is a map of teaching, moral principles, and the search for higher meaning. It highlights the importance of following established norms and transferring knowledge."
+  },
+  {
+ "name": "🃏Hierophant (inverted position)",
+ "description": "When reversed, the Hierophant may indicate dogmatism, rebellion against tradition, or hypocrisy. It may be difficult to accept authorities or find your own spiritual path."
+  },
+  {
+ "name": "🃏Lovers (direct position)",
+ "description": "Lovers symbolize love, harmony and choice. This is a map of relationships, both romantic and partnership. It indicates the need to make decisions based on the heart and mind."
+  },
+  {
+ "name": "🃏Lovers (inverted position)",
+ "description": "Inverted Lovers can indicate an imbalance in the relationship, conflicts, or incorrect choices. There may be difficulties in making decisions or unwillingness to make commitments."
+  },
+  {
+ "name": "🃏Chariot (straight position)",
+ "description": "The chariot symbolizes movement, victory and control. This is a map of determination, confidence, and overcoming obstacles. It indicates the need to move forward despite the difficulties."
+  },
+  {
+ "name": "🃏Chariot (inverted position)",
+ "description": "When reversed, the Chariot can indicate defeat, chaos, or loss of control. It may be difficult to achieve your goals due to lack of discipline or conflict."
+  },
+  {
+ "name": "🃏Force (forward position)",
+ "description": "Strength represents courage, soft power and passion. It is a map of inner strength that allows you to overcome your fears and control your emotions. It shows the need to be patient and compassionate."
+  },
+  {
+ "name": "🃏Force (inverted position)",
+ "description": "When reversed, Strength can indicate weakness, fear, or uncertainty. You may have difficulty controlling your emotions or situation."
+  },
+  {
+ "name": "🃏Hermit (straight position)",
+ "description": "The hermit symbolizes introspection, wisdom and solitude. It is a map of inner search that encourages reflection and the search for truth. It indicates the need to temporarily step away from the hustle and bustle."
+  },
+  {
+ "name": "🃏Hermit (inverted position)",
+ "description": "When reversed, a Hermit can indicate loneliness, isolation, or unwillingness to seek answers within themselves. It may be difficult to accept help from others."
+  },
+  {
+ "name": "🃏Wheel of Fortune (straight position)",
+ "description": "The Wheel of Fortune symbolizes fate, cycles and good luck. This is a map of change that indicates that life is in constant motion. It encourages acceptance of changes and trust in the process."
+  },
+  {
+ "name": "🃏Wheel of Fortune (upside down)",
+ "description": "When reversed, the Wheel of Fortune can indicate failure, resistance to change, or a sense of helplessness. It may be difficult to accept the inevitable."
+  },
+  {
+ "name": "🃏Justice (direct provision)",
+ "description": "Justice symbolizes justice, law and karma. This is a balance card that indicates the need to take responsibility for your actions. It calls for honesty and objectivity in decision-making."
+  },
+  {
+ "name": "🃏Justice (inverted position)",
+ "description": "Reversed Justice may indicate unfairness, bias, or avoidance of responsibility. You may have difficulty accepting the consequences of your actions."
+  },
+  {
+ "name": "🃏Hanged (straight position)",
+ "description": "The hanged man symbolizes sacrifice, pause and a new perspective on the situation. This is a map of revaluation of values, which encourages you to stop and look at things from a different angle. It indicates the need to let go of control."
+  },
+  {
+ "name": "🃏Hanged (inverted position)",
+ "description": "Upside-down Hanged can indicate stagnation, helplessness, or resistance to change. It may be difficult to accept a new perspective."
+  },
+  {
+ "name": "🃏Death (straight position)",
+ "description": "Death symbolizes transformation, end and renewal. This is a map of profound changes that lead to a new beginning. It indicates the need to let go of the old to make room for the new."
+  },
+  {
+ "name": "🃏Death (inverted position)",
+ "description": "Reversed, Death can indicate fear of change, stagnation, or resistance to change. It may be difficult to accept the inevitable."
+  },
+  {
+ "name": "🃏Moderation (straight position)",
+ "description": "Moderation symbolizes balance, healing and patience. This is a harmony card that calls for moderation and the search for a golden mean. It points to the need to unite opposites."
+  },
+  {
+ "name": "🃏Moderation (inverted position)",
+ "description": "When reversed, Moderation can indicate disharmony, extremes, or impatience. It may be difficult to find a balance."
+  },
+  {
+ "name": "🃏Devil (straight position)",
+ "description": "The devil symbolizes illusions, dependence and materiality. This is a map of temptations that can hold you captive. It indicates the need to be aware of your limitations."
+  },
+  {
+ "name": "🃏Devil (inverted position)",
+ "description": "In its inverted form, the Devil can indicate liberation from illusions, overcoming addiction, or a new perspective on the situation."
+  },
+  {
+ "name": "🃏Tower (straight position)",
+ "description": "The tower symbolizes collapse, awakening and sudden changes. This is a map of the destruction of old structures that no longer serve you. It indicates the need to embrace change, even if it is painful."
+  },
+  {
+ "name": "🃏Tower (inverted position)",
+ "description": "When inverted, the Tower may indicate crisis avoidance, postponement of changes, or fear of destruction. It may be difficult to accept the inevitable."
+  },
+  {
+ "name": "🃏Star (direct position)",
+ "description": "The star symbolizes hope, faith and inspiration. This is a map of light after dark, which encourages you to believe in the best. It points to healing and spiritual guidance."
+  },
+  {
+ "name": "🃏Star (inverted position)",
+ "description": "When inverted, the Star can indicate despair, pessimism, or loss of faith. It may be difficult to find hope."
+  },
+  {
+ "name": "🃏Moon (direct position)",
+ "description": "The moon symbolizes fears, illusions and the subconscious mind. This is a card of secrets that encourages you to trust your intuition, but be careful with deception."
+  },
+  {
+ "name": "🃏Moon (inverted position)",
+ "description": "When inverted, the moon can indicate clarity, overcoming fears, or revealing secrets. There may be difficulties with self-confidence."
+  },
+  {
+ "name": "🃏Sun (direct position)",
+ "description": "The sun symbolizes joy, success and vitality. This is an optimism card that brings light and clarity. It indicates achievement of goals and happiness."
+  },
+  {
+ "name": "🃏Sun (inverted position)",
+ "description": "When reversed, the Sun may indicate temporary difficulties, delays, or lack of confidence."
+  },
+  {
+ "name": "🃏Court (direct position)",
+ "description": "Judgment symbolizes renewal, invocation, and forgiveness. This is a card of spiritual awakening that indicates the need to accept your past and move forward."
+  },
+  {
+ "name": "🃏Court (inverted position)",
+ "description": "Reversed Judgment can indicate regret, stagnation, or resistance to change."
+  },
+  {
+ "name": "🃏World (direct position)",
+ "description": "Peace symbolizes completion, wholeness and harmony. This is a goal achievement card that brings a sense of satisfaction and peace."
+  },
+  {
+ "name": "🃏World (inverted position)",
+ "description": "When reversed, the World may indicate incompleteness, delays, or difficulty finding balance."
+  },
+  {
+ "name": "🃏Ace of Wands (straight position)",
+ "description": "The Ace of Wands symbolizes new beginnings, energy and inspiration. This is a map of creative potential that calls for action and implementation of ideas. It indicates an opportunity to start something meaningful."
+  },
+  {
+ "name": "🃏Ace of Wands (inverted position)",
+ "description": "When reversed, the Ace of Wands can indicate procrastination, lack of motivation, or missed opportunities. It may be difficult to start a new project."
+  },
+  {
+ "name": "🃏Two of Wands (straight position)",
+ "description": "The Two of Wands symbolises planning, choice and potential. This is a forward-looking map that encourages you to think carefully about your actions."
+  },
+  {
+ "name": "🃏Two of Wands (inverted position)",
+ "description": "When reversed, the Two of Wands can indicate indecision, fear of change, or lack of a clear plan."
+  },
+  {
+ "name": "🃏Three of Wands (straight position)",
+ "description": "The Three of Wands symbolises growth, collaboration and early success. This is a map of the implementation of plans, which indicates the fruits of your efforts."
+  },
+  {
+ "name": "🃏Three of Wands (inverted position)",
+ "description": "When reversed, the Three of Wands may indicate delays, frustration, or lack of support."
+  },
+  {
+ "name": "🃏Four of Wands (straight position)",
+ "description": "The Four of Wands symbolizes stability, celebration and harmony. This is a balance card that encourages you to enjoy the fruits of your labor."
+  },
+  {
+ "name": "🃏Four of Wands (inverted position)",
+ "description": "When reversed, the Four of Wands can indicate instability, temporary difficulties, or loss of joy."
+  },
+  {
+ "name": "🃏Five of Wands (straight position)",
+ "description": "The Five of Wands symbolises conflict, competition and challenges. This is a struggle card that calls for active action and protection of one's interests."
+  },
+  {
+ "name": "🃏Five of Wands (inverted position)",
+ "description": "When reversed, the Five of Wands can indicate conflict avoidance, fear of competition, or injustice."
+  },
+  {
+ "name": "🃏Six of Wands (straight position)",
+ "description": "The Six of Wands symbolizes victory, recognition and success. This is an achievement card that brings a sense of satisfaction and pride."
+  },
+  {
+ "name": "🃏Six of Wands (inverted position)",
+ "description": "When reversed, the Six of Wands can indicate delayed success, lack of recognition, or temporary setbacks."
+  },
+  {
+ "name": "🃏Seven of Wands (straight position)",
+ "description": "The Seven of Wands symbolizes protection, perseverance and struggle for your beliefs. This is a resistance card that encourages you to stand your ground."
+  },
+  {
+ "name": "🃏Seven of Wands (inverted position)",
+ "description": "When reversed, the Seven of Wands can indicate doubt, loss of confidence, or retreat."
+  },
+  {
+ "name": "🃏Eight of Wands (straight position)",
+ "description": "The Eight of Wands represents speed, movement, and rapid change. This is a map of active actions that encourages you to use the moment."
+  },
+  {
+ "name": "🃏Eight of Wands (inverted position)",
+ "description": "When reversed, the Eight of Wands can indicate delays, procrastination, or unexpected obstacles."
+  },
+  {
+ "name": "🃏Nine of Wands (straight position)",
+ "description": "The Nine of Wands symbolises perseverance, protection and vigilance. This is a challenge readiness card that encourages you to be alert."
+  },
+  {
+ "name": "🃏Nine of Wands (inverted position)",
+ "description": "When reversed, the Nine of Wands can indicate fatigue, loss of motivation, or excessive defense."
+  },
+  {
+ "name": "🃏Ten Wands (straight position)",
+ "description": "The Ten Wands symbolize workload, responsibility, and completion. This is a map of hard work that calls for the completion of what has been started."
+  },
+  {
+ "name": "🃏Ten Wands (inverted position)",
+ "description": "When reversed, a Dozen Wands may indicate overloading, avoiding responsibility, or the need to delegate tasks."
+  },
+  {
+    "name": "🃏Page of Wands (straight position)",
+ "description": "The Page of Wands symbolizes enthusiasm, new ideas and energy. This is a map of beginnings that calls for active actions."
+  },
+  {
+    "name": "🃏Page of Wands (inverted position)",
+ "description": "When reversed, a Page of Wands can indicate a lack of motivation, immaturity, or loss of interest."
+  },
+  {
+ "name": "🃏Knight of Wands (straight position)",
+ "description": "The Knight of Wands symbolizes action, courage and ambition. This is a map of moving forward that calls for determination."
+  },
+  {
+ "name": "🃏Knight of Wands (inverted position)",
+ "description": "When reversed, a Knight of Wands can indicate impulsiveness, recklessness, or delays."
+  },
+  {
+ "name": "🃏Queen of Wands (straight position)",
+ "description": "The Queen of Wands symbolizes passion, confidence and leadership. This is a strong personality card that inspires others."
+  },
+  {
+ "name": "🃏Queen of Wands (inverted position)",
+ "description": "When reversed, the Queen of Wands can indicate jealousy, manipulation, or loss of confidence."
+  },
+  {
+ "name": "🃏King of Wands (straight position)",
+ "description": "The King of Wands symbolizes leadership, charisma and authority. This is a map of a strong leader who leads."
+  },
+  {
+ "name": "🃏King of Wands (inverted position)",
+ "description": "When reversed, the King of Wands can indicate tyranny, selfishness, or abuse of power."
+  },
+  {
+ "name": "🃏Ace of Cups (straight position)",
+ "description": "The Ace of Cups symbolizes new emotional beginnings, love and creativity. This is a map of deep feelings that brings joy, inspiration and spiritual satisfaction. It can indicate a new relationship, romantic opportunities, or an awakening of creativity. The Ace of Cups encourages you to open your heart and accept the gifts of life."
+  },
+  {
+ "name": "🃏Ace of Cups (inverted position)",
+ "description": "When reversed, the Ace of Cups can indicate emotional emptiness, frustration, or blocked feelings. There may be difficulties with accepting love or a creative crisis. It's a warning to heal your heart and reconnect with your emotions."
+  },
+  {
+ "name": "🃏Two of Cups (straight position)",
+ "description": "The Two Cups symbolize harmony, partnership and mutual understanding. This is a map of the deep connection between people, whether it's a romantic relationship, friendship, or collaboration. It indicates balance, trust, and mutual support. The Deuce of Cups encourages you to appreciate your loved ones and work on strengthening your ties."
+  },
+  {
+ "name": "🃏Two of Cups (inverted position)",
+ "description": "Reversed, the Two of Cups may indicate an imbalance in the relationship, misunderstandings, or conflicts. There may be difficulties with trust or breaking ties. This is a warning about working on relationships and finding compromises."
+  },
+  {
+ "name": "🃏Three of Cups (straight position)",
+ "description": "The Troika of Cups symbolizes celebration, friendship and joy. This is a map of happy moments that are shared with loved ones. It indicates success, achievements, and a sense of unity. Troika of Cups encourages you to enjoy life and appreciate the support of others."
+  },
+  {
+ "name": "🃏Three of Cups (inverted position)",
+ "description": "When reversed, a Troika of Cups can indicate excessive dependence on others, conflicts in the circle of friends, or loss of joy. It may be difficult to share happiness or a sense of loneliness."
+  },
+  {
+ "name": "🃏Four of Cups (straight position)",
+ "description": "The Four Cups symbolize apathy, reflection and inner search. This is a pause card that encourages you to look inside yourself and reevaluate your emotional needs. It points to the need to find new sources of inspiration."
+  },
+  {
+ "name": "🃏Four of Cups (inverted position)",
+ "description": "The Four Cups symbolize apathy, reflection and inner search. This is a pause card that encourages you to look inside yourself and reevaluate your emotional needs. It points to the need to find new sources of inspiration."
+  },
+  {
+ "name": "🃏Five of Cups (straight position)",
+ "description": "The Five Cups symbolize loss, regret and sadness. This is a map of an emotional crisis that indicates the need to accept your feelings and find a path to healing. It reminds us that all is not lost, and there is hope for recovery."
+  },
+  {
+ "name": "🃏Five of Cups (inverted position)",
+ "description": "Reversed, the Five of Cups can indicate overcoming grief, accepting losses, or a new perspective on the situation. It's a warning to let go of the past and move forward."
+  },
+  {
+ "name": "🃏Six of Cups (straight position)",
+ "description": "The Six Cups symbolize nostalgia, childhood memories and innocence. This is a map of warm feelings that brings comfort and joy from the past. It indicates that you can restore old connections or get support."
+  },
+  {
+ "name": "🃏Six of Cups (inverted position)",
+ "description": "When reversed, the Six of Cups can indicate a sense of being stuck in the past, an unhealthy attachment, or difficulty letting go of old grudges."
+  },
+  {
+ "name": "🃏Seven of Cups (straight position)",
+ "description": "The Seven Cups symbolize illusions, dreams and choices. It is a map of the imagination that points out many possibilities, but also warns you to distinguish the real from the desired."
+  },
+  {
+ "name": "🃏Seven of Cups (inverted position)",
+ "description": "When reversed, the Seven of Cups can indicate clarity, acceptance of reality, or readiness for action."
+  },
+  {
+ "name": "🃏Eight of Cups (straight position)",
+ "description": "The Eight of Cups symbolizes care, search for meaning and emotional release. It is a map of leaving behind what no longer serves you in order to find deeper satisfaction."
+  },
+  {
+ "name": "🃏Eight of Cups (inverted position)",
+ "description": "When reversed, the Eight of Cups can indicate a fear of change, getting stuck in an unhealthy situation, or unwillingness to let go of the past."
+  },
+  {
+ "name": "🃏Nine of Cups (straight position)",
+ "description": "The Nine Cups symbolize satisfaction, well-being and emotional harmony. This is a wish fulfillment card that brings a sense of joy and gratitude"
+  },
+  {
+ "name": "🃏Nine of Cups (inverted position)",
+ "description": "When reversed, the Nine of Cups may indicate temporary difficulties, loss of satisfaction, or the need to reevaluate your values."
+  },
+  {
+ "name": "🃏Ten Cups (straight position)",
+ "description": "The Ten Cups symbolize happiness, harmony and family well-being. This is an emotional completion card that brings a sense of fullness and fulfillment."
+  },
+  {
+ "name": "🃏Ten Cups (inverted position)",
+ "description": "Upside down, a Dozen Cups can indicate disharmony in the family, temporary difficulties, or the need to work on relationships."
+  },
+  {
+ "name": "🃏Ace of Swords (straight position)",
+ "description": "The Ace of Swords symbolizes clarity of mind, breakthrough and new ideas. This is an intellectual power card that brings insight and helps resolve difficult situations. It indicates the possibility of reaching the truth through logic and analysis. Ace of Swords encourages courage in making decisions and using your intelligence."
+  },
+  {
+ "name": "🃏Ace of Swords (inverted position)",
+ "description": "When reversed, the Ace of Swords may indicate confusion, incorrect decisions, or excessive rigidity. There may be difficulties with clarity of thinking or a tendency to manipulate. This is a warning to be careful in your judgment."
+  },
+  {
+ "name": "🃏Two of Swords (straight position)",
+ "description": "The Two of Swords symbolize deadlock, choice and internal conflict. This is a balance card that indicates the need for a balanced approach to decision-making. It calls for objectivity and compromise."
+  },
+  {
+ "name": "🃏Two of Swords (inverted position)",
+ "description": "When reversed, a Deuce of Swords can indicate indecision, problem avoidance, or emotional blockage. There may be difficulties in making decisions due to fear of consequences."
+  },
+  {
+ "name": "🃏Three of Swords (straight position)",
+ "description": "The Three Swords symbolize pain, frustration and loss. This is a map of an emotional wound that indicates the need to accept your feelings and heal. It reminds us that pain is temporary, and it is important to find the strength to move forward."
+  },
+  {
+ "name": "🃏Three of Swords (inverted position)",
+ "description": "When reversed, the Three of Swords can indicate the beginning of healing, acceptance of losses, or a new perspective on the situation. It's a warning to let go of the past and focus on the future."
+  },
+  {
+ "name": "🃏Four of Swords (straight position)",
+ "description": "The Four of Swords symbolizes rest, recovery and pause. This is a respite card that encourages introspection and strength building. It indicates the need to temporarily step away from the hustle and bustle and focus on your inner world."
+  },
+  {
+ "name": "🃏Four of Swords (inverted position)",
+ "description": "When reversed, the Four of Swords can indicate stagnation, problem avoidance, or excessive isolation. It may be difficult to return to active life."
+  },
+  {
+ "name": "🃏Five of Swords (straight position)",
+ "description": "The Five of Swords symbolises conflict, betrayal and defeat. This is a struggle card that indicates the need to be careful in your actions and words. She reminds us that not all victories bring satisfaction."
+  },
+  {
+ "name": "🃏Five of Swords (inverted position)",
+ "description": "When reversed, the Five of Swords may indicate reconciliation, non-combat,or compromise. This is a warning to avoid unnecessary conflicts."
+  },
+  {
+ "name": "🃏Six of Swords (straight position)",
+ "description": "The Six of Swords symbolises transition, healing and moving forward. This is a map of change that indicates the opportunity to leave the past behind and start a new stage of life. It brings hope and relief."
+  },
+  {
+ "name": "🃏Six of Swords (inverted position)",
+ "description": "When reversed, the Six of Swords can indicate being stuck in the past, resisting change, or having difficulty accepting new things."
+  },
+  {
+ "name": "🃏Seven of Swords (straight position)",
+ "description": "The Seven of Swords symbolizes deception, cunning and hidden actions. This is a strategy card that indicates the need to be careful and not trust everything at your word. It warns you about possible manipulations."
+  },
+  {
+ "name": "🃏Seven of Swords (inverted position)",
+ "description": "When reversed, the Seven of Swords may indicate the discovery of deception, a return to honesty, or the need to reconsider one's actions."
+  },
+  {
+ "name": "🃏Eight of Swords (straight position)",
+ "description": "The Eight of Swords symbolizes limitations, fear and a sense of helplessness. This is a map of mental blocks that prevent you from moving forward. It indicates the need to look at the situation from a new perspective."
+  },
+  {
+ "name": "🃏Eight of Swords (inverted position)",
+ "description": "When reversed, the Eight of Swords can indicate release from fears, overcoming limitations, or a new perspective on the situation."
+  },
+  {
+ "name": "🃏Nine of Swords (straight position)",
+ "description": "The Nine Swords symbolize anxiety, fear and nightmares. This is a map of mental suffering that is often exaggerated. It indicates the need to seek support and work on your fears."
+  },
+  {
+ "name": "🃏Nine of Swords (inverted position)",
+ "description": "When reversed, the Nine of Swords can indicate overcoming anxiety, starting healing, or a new perspective on the situation."
+  },
+  {
+ "name": "🃏Ten Swords (straight position)",
+ "description": "The Ten Swords symbolize crisis, end and pain. This is a completion card that indicates the need to accept the inevitable and start a new stage. It reminds you that after dark there is always light."
+  },
+  {
+ "name": "🃏Ten Swords (inverted position)",
+ "description": "When reversed, the Ten Swords can indicate the beginning of recovery, acceptance of losses, or a new perspective on the situation."
+  },
+  {
+ "name": "🃏Ace of Pentacles (straight position)",
+ "description": "The Ace of Pentacles symbolizes new opportunities, material well-being and abundance. This is a map of the beginning of prosperity, which brings a chance to improve your financial situation or realize practical goals. It indicates the potential for growth, stability, and success. The Ace of Pentacles encourages you to use opportunities wisely and be grateful for the gifts of life."
+  },
+  {
+ "name": "🃏Ace of Pentacles (inverted position)",
+ "description": "When reversed, the Ace of Pentacles can indicate missed opportunities, financial difficulties, or lack of practicality. There may be difficulties with the implementation of plans or inability to see the potential. This is a warning about the need to be more attentive to details and not miss chances."
+  },
+  {
+ "name": "🃏Two of Pentacles (straight position)",
+ "description": "The Two Pentacles symbolize balance, flexibility and adaptation. This is a map of managing multiple tasks simultaneously, which indicates the need to be flexible and find balance in the chaos. It calls for a creative approach to solving problems."
+  },
+  {
+ "name": "🃏Two Pentacles (inverted position)",
+ "description": "When reversed, a pair of Pentacles can indicate an imbalance, overload, or inability to cope with tasks. You may have difficulty setting priorities or feel overwhelmed."
+  },
+  {
+ "name": "🃏Three Pentacles (straight position)",
+ "description": "The Three Pentacles symbolize mastery, collaboration and recognition. This is a professional growth map that highlights the importance of teamwork and the pursuit of excellence. It brings success through hard work and talent."
+  },
+  {
+ "name": "🃏Three Pentacles (inverted position)",
+ "description": "When reversed, a Triple of Pentacles can indicate a lack of recognition, conflicts in the team, or low motivation. It may be difficult to achieve your goals due to lack of support."
+  },
+  {
+ "name": "🃏Four Pentacles (straight position)",
+ "description": "The Four Pentacles symbolize stability, preservation and control. This is a financial security map that indicates the need for frugality and prudent resource management. It encourages you to appreciate what you have."
+  },
+  {
+ "name": "🃏Four Pentacles (inverted position)",
+ "description": "When reversed, the Four Pentacles can indicate avarice, fear of loss, or excessive attachment to material things. There may be difficulties with generosity or an inability to let go of control."
+  },
+  {
+ "name": "🃏Five of Pentacles (straight position)",
+ "description": "The Five Pentacles symbolize need, loss, and hardship. This is a map of the financial crisis, which indicates the need to seek support and find new ways to solve problems. It reminds us that even in difficult times, there is hope."
+  },
+  {
+ "name": "🃏Five Pentacles (inverted position)",
+ "description": "When reversed, the Five Pentacles can indicate the beginning of recovery, outside help, or a new perspective on the situation. This is a warning to be open to changes."
+  },
+  {
+ "name": "🃏Six of Pentacles (straight position)",
+ "description": "The Six Pentacles symbolize generosity, balance and support. This is a resource sharing map that highlights the importance of helping others and getting help in return. It brings a sense of justice and gratitude."
+  },
+  {
+ "name": "🃏Six of Pentacles (inverted position)",
+ "description": "When reversed, the Six of Pentacles can indicate an imbalance in a relationship, an abuse of generosity, or a financial dependency. There may be difficulties in establishing justice."
+  },
+  {
+ "name": "🃏Seven of Pentacles (straight position)",
+ "description": "The Seven Pentacles symbolize patience, investment and long-term goals. This is a waiting card for results, which indicates the need to be patient and believe in your efforts. It calls for planning and perseverance."
+  },
+  {
+ "name": "🃏Seven of Pentacles (inverted position)",
+ "description": "When reversed, the Seven of Pentacles can indicate a loss of patience, frustration, or the need to rethink your goals. It may be difficult to achieve what you want."
+  },
+  {
+ "name": "🃏Eight of Pentacles (straight position)",
+ "description": "The Eight of Pentacles symbolizes skill, hard work and perfection. This is a hard work card that highlights the importance of focus and discipline. It brings success through dedication and attention to detail."
+  },
+  {
+ "name": "🃏Eight of Pentacles (inverted position)",
+ "description": "Inverted, the Eight of Pentacles can indicate a lack of motivation, poor quality of work, or loss of interest. There may be difficulties in achieving mastery."
+  },
+  {
+ "name": "🃏Nine of Pentacles (straight position)",
+ "description": "The Nine Pentacles symbolize well-being, comfort and enjoyment of the fruits of labor. This is a map of material success that brings a sense of satisfaction and security. It indicates an opportunity to enjoy life."
+  },
+  {
+ "name": "🃏Nine Pentacles (inverted position)",
+ "description": "When reversed, the Nine Pentacles may indicate temporary difficulties, loss of comfort, or the need to reevaluate your values."
+  },
+  {
+ "name": "🃏Ten Pentacles (straight position)",
+ "description": "The Ten Pentacles symbolize wealth, inheritance and family well-being. It is a completion card that brings a sense of stability and prosperity. It indicates the possibility of enjoying the fruits of your efforts."
+  },
+  {
+ "name": "🃏Ten Pentacles (inverted position)",
+ "description": "Upside down, a Dozen Pentacles can indicate financial difficulties, family conflicts, or the need to work on stability."
+  },
+  {
+ "name": "🃏Page of Pentacles (straight position)",
+ "description": "The page of Pentacles symbolizes learning, new opportunities and practical skills. This is a map of beginnings that indicates the potential for growth and development."
+  },
+  {
+ "name": "🃏Page of Pentacles (inverted position)",
+ "description": "When reversed, a Page of Pentacles can indicate a lack of motivation, immaturity, or missed opportunities."
+  },
+  {
+ "name": "🃏Knight of Pentacles (straight position)",
+ "description": "The Knight of Pentacles symbolizes stability, reliability and perseverance. This is a map of slow but steady progress that calls for patience and discipline."
+  },
+  {
+ "name": "🃏Knight of Pentacles (inverted position)",
+ "description": "When reversed, a Pentacle Knight can indicate stagnation, laziness, or excessive caution."
+  },
+  {
+ "name": "🃏Queen of Pentacles (straight position)",
+ "description": "The Queen of Pentacles symbolizes abundance, care and practicality. This is a map of a strong and wise woman who knows how to manage resources and create comfort."
+  },
+  {
+ "name": "🃏Queen of Pentacles (inverted position)",
+ "description": "When reversed, the Queen of Pentacles can indicate extravagance, excessive attachment to material things, or loss of balance."
+  },
+  {
+ "name": "🃏King of Pentacles (straight position)",
+ "description": "The King of Pentacles symbolizes success, stability and financial wisdom. This is a map of a strong leader who knows how to manage resources and achieve goals."
+  },
+  {
+ "name": "🃏King of Pentacles (inverted position)",
+ "description": "When reversed, the King of Pentacles can indicate greed, abuse of power, or financial difficulties."
+  }
+]
